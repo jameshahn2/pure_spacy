@@ -31,6 +31,7 @@ headers = {
 }
 
 nlp = spacy.load("en_core_web_sm")
+nlp.max_length = 4000000
 app = Flask(__name__)
 
 
@@ -57,7 +58,7 @@ def get_page(page_url, retry=0):
         response = requests.get(page_url, headers=headers, timeout=30)
         return response.content
     except:
-        if retry < 5:
+        if retry < 10:
             return getPage(page_url, retry=retry + 1)
         else:
             return 0
@@ -70,14 +71,14 @@ def get_text(url):
     # kill all script and style elements
     for script in soup(["script", "style"]):
         script.decompose()  # rip it out
-    fetched_text = ' '.join(
-        map(lambda p: p.text, soup.select('.content-text.content-text-article,.l-container,'
-                                          '.entry-content.entry-content-read-more,.asset-content.p402_premium.subscriber-premium,'
-                                          '.bigtext,.entry-content,.HomeTopRow.ContentFullWidth.home_slideshow.section_feature.google_standout.section_follow_1.section_follow_2.section_follow_3,'
-                                          '.c-article__body.o-rte-text.u-spacing.l-container--content.ember-view,'
-                                          '.body-text,.entry-content.Entry-content,.article-body,.story-body,.body-content,'
-                                          '.article-content.rich-text,.article-content-wrapper,.postBody,.td-post-content,.m-entry-content,'
-                                          'section.c-main__body.js-original-content-body.s-content,.p402_premium,.content-copy')))
+    print(map(lambda p: p.text, soup.find_all('p'), soup.select('.content-text.content-text-article,.l-container,'
+                                            '.entry-content.entry-content-read-more,.asset-content.p402_premium.subscriber-premium,'
+                                            '.bigtext,.entry-content,.HomeTopRow.ContentFullWidth.home_slideshow.section_feature.google_standout.section_follow_1.section_follow_2.section_follow_3,'
+                                            '.c-article__body.o-rte-text.u-spacing.l-container--content.ember-view,'
+                                            '.body-text,.entry-content.Entry-content,.article-body,.story-body,.body-content,'
+                                            '.article-content.rich-text,.article-content-wrapper,.postBody,.td-post-content,.m-entry-content,'
+                                            'section.c-main__body.js-original-content-body.s-content,.p402_premium,.content-copy')))
+    fetched_text = ' '.join(page.text)
     return fetched_text
 
 
