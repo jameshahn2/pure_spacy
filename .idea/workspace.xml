@@ -4,8 +4,9 @@
     <list default="true" id="b1584eee-d832-4deb-9516-9f717a114472" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spacy_summarization.py" beforeDir="false" afterPath="$PROJECT_DIR$/spacy_summarization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,7 +18,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -25,8 +28,16 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1UDeLLX9BjGTBhYanNC5Aaak50q" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -42,18 +53,6 @@
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -84,6 +83,18 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -104,7 +115,10 @@
       <workItem from="1575269937191" duration="1014000" />
       <workItem from="1575273603143" duration="1751000" />
       <workItem from="1575275992383" duration="878000" />
-      <workItem from="1575281092342" duration="21032000" />
+      <workItem from="1575281092342" duration="28443000" />
+      <workItem from="1575392307525" duration="580000" />
+      <workItem from="1575401349254" duration="601000" />
+      <workItem from="1575402081631" duration="11600000" />
     </task>
     <servers />
   </component>
@@ -116,13 +130,49 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
   </component>
+  <component name="WindowStateProjectService">
+    <state x="884" y="497" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1575402150922">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="884" y="497" key="#com.intellij.fileTypes.FileTypeChooser/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575402150922" />
+    <state x="968" y="439" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1575402066841">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="968" y="439" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575402066841" />
+    <state width="2355" height="607" key="GridCell.Tab.0.bottom" timestamp="1575423554548">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2355" height="607" key="GridCell.Tab.0.bottom/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575423554548" />
+    <state width="2355" height="607" key="GridCell.Tab.0.center" timestamp="1575423554547">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2355" height="607" key="GridCell.Tab.0.center/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575423554547" />
+    <state width="2355" height="607" key="GridCell.Tab.0.left" timestamp="1575423554547">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2355" height="607" key="GridCell.Tab.0.left/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575423554547" />
+    <state width="2355" height="607" key="GridCell.Tab.0.right" timestamp="1575423554548">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2355" height="607" key="GridCell.Tab.0.right/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575423554548" />
+    <state x="770" y="448" key="com.intellij.ide.util.TipDialog" timestamp="1575402093707">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="770" y="448" key="com.intellij.ide.util.TipDialog/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575402093707" />
+    <state x="814" y="327" width="1062" height="808" key="find.popup" timestamp="1575415118597">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="814" y="327" width="1062" height="808" key="find.popup/2560.314.1440.877/0.23.2560.1417@0.23.2560.1417" timestamp="1575415118597" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pure_spacy$app.coverage" NAME="app Coverage Results" MODIFIED="1575309649047" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pure_spacy$app.coverage" NAME="app Coverage Results" MODIFIED="1575423554539" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

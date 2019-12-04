@@ -23,7 +23,7 @@ def text_summarizer(raw_doc):
     maximum_frequency = max(word_frequencies.values())
 
     for word in word_frequencies.keys():
-        word_frequencies[word] = (word_frequencies[word] / maximum_frequency)
+        word_frequencies[word] = (word_frequencies[word]/maximum_frequency)
     # Sentence Tokens
     sentence_list = [sentence for sentence in doc.sents]
 
@@ -40,6 +40,6 @@ def text_summarizer(raw_doc):
 
     summarized_sentences = nlargest(7, sentence_scores, key=sentence_scores.get)
     final_sentences = [w.text for w in summarized_sentences]
-    summary: str = ' '.join(final_sentences)
+    summary = ' '.join(final_sentences)
     return summary
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 from bs4 import BeautifulSoup, SoupStrainer
 from flask import Flask, render_template, url_for, request
@@ -52,33 +54,23 @@ def readingtime(mytext):
     return estimatedTime
 
 
-# Get page from URL
-def get_page(page_url, retry=0):
-    try:
-        response = requests.get(page_url, headers=headers, timeout=30)
-        return response.content
-    except:
-        if retry < 10:
-            return getPage(page_url, retry=retry + 1)
-        else:
-            return 0
-
-
 # Fetch Text From Url
 def get_text(url):
-    page = requests.get(url)
+    page = requests.get(url, headers=headers, timeout=30)
     soup = BeautifulSoup(page.text, 'lxml')
+    soup.find_all(lambda tag: tag.name == 'p' and not tag.attrs)
+    print(soup.prettify())
     # kill all script and style elements
     for script in soup(["script", "style"]):
         script.decompose()  # rip it out
-    print(map(lambda p: p.text, soup.find_all('p'), soup.select('.content-text.content-text-article,.l-container,'
-                                            '.entry-content.entry-content-read-more,.asset-content.p402_premium.subscriber-premium,'
-                                            '.bigtext,.entry-content,.HomeTopRow.ContentFullWidth.home_slideshow.section_feature.google_standout.section_follow_1.section_follow_2.section_follow_3,'
-                                            '.c-article__body.o-rte-text.u-spacing.l-container--content.ember-view,'
-                                            '.body-text,.entry-content.Entry-content,.article-body,.story-body,.body-content,'
-                                            '.article-content.rich-text,.article-content-wrapper,.postBody,.td-post-content,.m-entry-content,'
-                                            'section.c-main__body.js-original-content-body.s-content,.p402_premium,.content-copy')))
-    fetched_text = ' '.join(page.text)
+    fetched_text = ' '.join(list(map(lambda p: p.text, soup.select(
+        '.ArticlePage-articleBody,.content-text.content-text-article,.l-container,'
+        '.entry-content.entry-content-read-more,.asset-content.p402_premium.subscriber-premium,'
+        '.bigtext,.entry-content,.HomeTopRow.ContentFullWidth.home_slideshow.section_feature.google_standout.section_follow_1.section_follow_2.section_follow_3,'
+        '.c-article__body.o-rte-text.u-spacing.l-container--content.ember-view,'
+        '.body-text,.entry-content.Entry-content,.article-body,.story-body,.body-content,'
+        '.article-content.rich-text,.article-content-wrapper,.postBody,.td-post-content,.m-entry-content,'
+        'section.c-main__body.js-original-content-body.s-content,.p402_premium,.content-copy'))))
     return fetched_text
 
 
