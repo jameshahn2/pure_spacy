@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import unicode_literals
-from bs4 import BeautifulSoup, SoupStrainer
+from bs4 import BeautifulSoup
 from flask import Flask, render_template, url_for, request
 from gensim.summarization import summarize
 from nltk_summarization import nltk_summarizer
+from newspaper import Article
 from spacy_summarization import text_summarizer
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from spacy.lang.en import English
+import chardet
 import flask
 import requests
 import spacy
@@ -33,7 +33,6 @@ headers = {
 }
 
 nlp = spacy.load("en_core_web_sm")
-nlp.max_length = 4000000
 app = Flask(__name__)
 
 
@@ -52,26 +51,6 @@ def readingtime(mytext):
     total_words = len([token.text for token in nlp(mytext)])
     estimatedTime = total_words / 200.0
     return estimatedTime
-
-
-# Fetch Text From Url
-def get_text(url):
-    page = requests.get(url, headers=headers, timeout=30)
-    soup = BeautifulSoup(page.text, 'lxml')
-    soup.find_all(lambda tag: tag.name == 'p' and not tag.attrs)
-    print(soup.prettify())
-    # kill all script and style elements
-    for script in soup(["script", "style"]):
-        script.decompose()  # rip it out
-    fetched_text = ' '.join(list(map(lambda p: p.text, soup.select(
-        '.ArticlePage-articleBody,.content-text.content-text-article,.l-container,'
-        '.entry-content.entry-content-read-more,.asset-content.p402_premium.subscriber-premium,'
-        '.bigtext,.entry-content,.HomeTopRow.ContentFullWidth.home_slideshow.section_feature.google_standout.section_follow_1.section_follow_2.section_follow_3,'
-        '.c-article__body.o-rte-text.u-spacing.l-container--content.ember-view,'
-        '.body-text,.entry-content.Entry-content,.article-body,.story-body,.body-content,'
-        '.article-content.rich-text,.article-content-wrapper,.postBody,.td-post-content,.m-entry-content,'
-        'section.c-main__body.js-original-content-body.s-content,.p402_premium,.content-copy'))))
-    return fetched_text
 
 
 @app.route('/')
@@ -110,12 +89,22 @@ def analyze():
                                  summary_reading_time_nltk=summary_reading_time_nltk)
 
 
+# Fetch Text From Url
+def get_text(url):
+    r = requests.get(url, headers=headers, timeout=30)
+    article = Article(url)
+    article.download()
+    article.html
+    article.parse()
+    return article.text
+
+
 @app.route('/analyze_url', methods=['GET', 'POST'])
 def analyze_url():
-    start: float = time.time()
+    start = time.time()
     if request.method == 'POST':
         raw_url = request.form['raw_url']
-        rawtext: str = get_text(raw_url)
+        rawtext = get_text(raw_url)
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(final_summary_spacy)
