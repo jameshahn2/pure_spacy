@@ -120,7 +120,7 @@ def analyze_url():
 
         end = time.time()
         final_time = end - start
-    return flask.render_template('index.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
+    return render_template('index.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
                                  final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
                                  final_time=final_time, final_reading_time=final_reading_time,
                                  summary_reading_time=summary_reading_time,
@@ -132,7 +132,7 @@ def analyze_url():
 
 @app.route('/about')
 def about():
-    return flask.render_template('index.html')
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
