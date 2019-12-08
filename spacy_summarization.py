@@ -40,4 +40,4 @@ def text_summarizer(raw_docx):
 
     summarized_sentences = nlargest(7, sentence_scores, key=sentence_scores.get)
     final_sentences = [f'{w.text}' for w in summarized_sentences]
-    return str(final_sentences)
+    return list(final_sentences)

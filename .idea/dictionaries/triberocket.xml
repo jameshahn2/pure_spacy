@@ -4,12 +4,15 @@
       <w>bgcolor</w>
       <w>bigtext</w>
       <w>clearfix</w>
+      <w>displa</w>
+      <w>displacy</w>
       <w>docx</w>
       <w>fdbff</w>
       <w>invis</w>
       <w>maximagesize</w>
       <w>nltk</w>
       <w>slideshow</w>
+      <w>spacy</w>
       <w>tokenization</w>
       <w>vpal</w>
     </words>

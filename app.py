@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 from flask import Flask, render_template, url_for, request
 from gensim.summarization import summarize
 from nltk_summarization import nltk_summarizer
-from newspaper import Article
+from newspaper import Article, fulltext
 from spacy_summarization import text_summarizer
 from sumy.nlp.tokenizers import Tokenizer
+from nltk.tokenize import sent_tokenize
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from spacy.lang.en import English
@@ -35,15 +36,13 @@ headers = {
 nlp = spacy.load("en_core_web_sm")
 app = Flask(__name__)
 
-
 # Sumy
 def sumy_summary(doc):
     parser = PlaintextParser.from_string(doc, Tokenizer("english"))
     lex_summarizer = LexRankSummarizer()
-    summary = lex_summarizer(parser.document, 3)
-    summary_list = [str(sentence) for sentence in summary]
-    result = ' '.join(summary_list)
-    return result
+    summary = lex_summarizer(parser.document, 5)
+    result = [str(sentence) for sentence in summary]
+    return list(result)
 
 
 # Reading Time
@@ -66,35 +65,35 @@ def analyze():
         rawtext = flask.request.form['rawtext']
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
-        summary_reading_time = readingtime(final_summary_spacy)
+        summary_reading_time = readingtime(str(final_summary_spacy))
         # Gensim Summarizer
-        final_summary_gensim = summarize(rawtext)
-        summary_reading_time_gensim = readingtime(final_summary_gensim)
+        final_summary_gensim = summarize(rawtext, split=True)
+        summary_reading_time_gensim = readingtime(str(final_summary_gensim))
         # NLTK
         final_summary_nltk = nltk_summarizer(rawtext)
-        summary_reading_time_nltk = readingtime(final_summary_nltk)
+        summary_reading_time_nltk = readingtime(str(final_summary_nltk))
         # Sumy
         final_summary_sumy = sumy_summary(rawtext)
-        summary_reading_time_sumy = readingtime(final_summary_sumy)
+        summary_reading_time_sumy = readingtime(str(final_summary_sumy))
 
         end = time.time()
         final_time = end - start
-    return flask.render_template('index.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
-                                 final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
-                                 final_time=final_time, final_reading_time=final_reading_time,
-                                 summary_reading_time=summary_reading_time,
-                                 summary_reading_time_gensim=summary_reading_time_gensim,
-                                 final_summary_sumy=final_summary_sumy,
-                                 summary_reading_time_sumy=summary_reading_time_sumy,
-                                 summary_reading_time_nltk=summary_reading_time_nltk)
+    return render_template('analyze_url.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
+                           final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
+                           final_time=final_time, final_reading_time=final_reading_time,
+                           summary_reading_time=summary_reading_time,
+                           summary_reading_time_gensim=summary_reading_time_gensim,
+                           final_summary_sumy=final_summary_sumy,
+                           summary_reading_time_sumy=summary_reading_time_sumy,
+                           summary_reading_time_nltk=summary_reading_time_nltk)
 
 
 # Fetch Text From Url
 def get_text(url):
-    r = requests.get(url, headers=headers, timeout=30)
+    r = requests.get(url, headers=headers, timeout=30).text
     article = Article(url)
     article.download()
-    article.html
+    print(article.text)
     article.parse()
     return article.text
 
@@ -107,27 +106,29 @@ def analyze_url():
         rawtext = get_text(raw_url)
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
-        summary_reading_time = readingtime(final_summary_spacy)
+        summary_reading_time = readingtime(str(final_summary_spacy))
+        final_summary_spacy_str = str(final_summary_spacy)
+        print(final_summary_spacy)
         # Gensim Summarizer
-        final_summary_gensim = summarize(rawtext)
-        summary_reading_time_gensim = readingtime(final_summary_gensim)
+        final_summary_gensim = summarize(rawtext, split=True)
+        summary_reading_time_gensim = readingtime(str(final_summary_gensim))
         # NLTK
         final_summary_nltk = nltk_summarizer(rawtext)
-        summary_reading_time_nltk = readingtime(final_summary_nltk)
+        summary_reading_time_nltk = readingtime(str(final_summary_nltk))
         # Sumy
         final_summary_sumy = sumy_summary(rawtext)
-        summary_reading_time_sumy = readingtime(final_summary_sumy)
+        summary_reading_time_sumy = readingtime(str(final_summary_sumy))
 
         end = time.time()
         final_time = end - start
-    return render_template('index.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
-                                 final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
-                                 final_time=final_time, final_reading_time=final_reading_time,
-                                 summary_reading_time=summary_reading_time,
-                                 summary_reading_time_gensim=summary_reading_time_gensim,
-                                 final_summary_sumy=final_summary_sumy,
-                                 summary_reading_time_sumy=summary_reading_time_sumy,
-                                 summary_reading_time_nltk=summary_reading_time_nltk)
+    return render_template('analyze_url.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
+                           final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
+                           final_time=final_time, final_reading_time=final_reading_time,
+                           summary_reading_time=summary_reading_time,
+                           summary_reading_time_gensim=summary_reading_time_gensim,
+                           final_summary_sumy=final_summary_sumy,
+                           summary_reading_time_sumy=summary_reading_time_sumy,
+                           summary_reading_time_nltk=summary_reading_time_nltk)
 
 
 @app.route('/about')
