@@ -110,7 +110,7 @@ def analyze_url():
         final_summary_spacy_str = str(final_summary_spacy)
         print(final_summary_spacy)
         # Gensim Summarizer
-        final_summary_gensim = summarize(rawtext, split=True)
+        final_summary_gensim = summarize(rawtext, ratio=0.1, split=True)
         summary_reading_time_gensim = readingtime(str(final_summary_gensim))
         # NLTK
         final_summary_nltk = nltk_summarizer(rawtext)
@@ -121,7 +121,7 @@ def analyze_url():
 
         end = time.time()
         final_time = end - start
-    return render_template('analyze_url.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
+    return render_template('index.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
                            final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
                            final_time=final_time, final_reading_time=final_reading_time,
                            summary_reading_time=summary_reading_time,

@@ -5,7 +5,7 @@
     <meta content="utf-8" http-equiv="encoding">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Summaryzer</title>
+  <title>sumitUP</title>
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="/static/css/materialize.css" type="text/css" rel="stylesheet" media="screen, projection" />
@@ -17,7 +17,7 @@
       {% block navbar %}
     <nav class="grey darken-4" role="navigation">
       <div class="nav-wrapper container">
-        <a id="logo-container" href="/" class="brand-logo">Summaryzer</a>
+        <a id="logo-container" href="/" class="brand-logo">sumitUP</a>
         <ul class="right hide-on-med-and-down">
             <li><a href="{{url_for('index')}}">Home</a></li>
         </ul>
@@ -30,34 +30,87 @@
     <li><a href="{{url_for('index')}}">Home</a></li>
   </ul>
   <!-- Start of Main Section -->
-  <div class="container">
-    <h3 align="center">Summarize in Seconds</h3>
-    <div class="section">
-      <!--  Summary Section   -->
-      <div class="row">
-        <div class="col s6">
-          <form method="POST" action="/analyze">
-            <textarea style="min-height: 5rem" name="rawtext" cols="3" rows="5" class="form-control" required="true" placeholder="Enter Text Here"></textarea>
-            <button class="btn btn-small waves-effect waves-light light-blue lighten-1" type="reset">Clear</button>
-            <button class="btn btn-small waves-effect waves-light purple lighten-1" type="submit">Summarize</button>
-          </form>
-        </div>
-        <div class="col s6">
+<section class="section section-solutions-about grey lighten-3 ">
+  <div class="row">
+  <div class="col s6">
+          <ul class="tabs">
+            <li class="tab col s3"><a href="#tab_url" class="blue-text">sumUP URL</a></li>
+            <li class="tab col s3"><a href="#tab_text" class="blue-text">sumUP Text</a></li>
+          </ul>
+        <div id="tab_url" class="col s12" style="padding: unset">
           <form method="POST" action="/analyze_url">
-            <input style="min-height: 5rem" type="text" name="raw_url" placeholder="Enter URL Here" required="true">
+            <input style="min-height: 5rem" name="raw_url" placeholder="Enter URL Here" required="true">
             <button class="btn btn-small waves-effect waves-light light-blue lighten-1" type="reset">Clear</button>
             <button class="btn btn-small waves-effect waves-light purple lighten-1" type="submit">Summarize</button>
           </form>
         </div>
-      </div>
-    </div>
+        <div id="tab_text" class="col s12" style="padding: unset">
+          <form method="POST" action="/analyze">
+            <textarea style="min-height: 5rem" name="rawtext" class="form-control" required="true" placeholder="Enter Text Here"></textarea>
+            <button class="btn btn-small waves-effect waves-light light-blue lighten-1" type="reset">Clear</button>
+            <button class="btn btn-small waves-effect waves-light purple lighten-1" type="submit">Summarize</button>
+          </form>
+        </div>
   </div>
+        <div class="row">
+          <div class="col s6" style="float: right;margin-bottom: 10px;">
+            <ul class="tabs">
+              <li class="tab col s3"><a href="#tab1" class="blue-text">spaCy</a></li>
+              <li class="tab col s3"><a href="#tab2" class="blue-text">Gensim</a></li>
+              <li class="tab col s3"><a href="#tab3" class="blue-text">NLTK</a></li>
+              <li class="tab col s3"><a href="#tab4" class="blue-text">Sumy</a></li>
+            </ul>
+          </div>
+          <div id="tab1" class="col s6" style="float: none">
+            {% if final_summary_spacy %}
+            <h5>spaCy</h5>
+            <p>Reading Time: <span style="color:#0091EA;">{{ summary_reading_time }} min</span></p>
+            <ul>{% for final_sentences in final_summary_spacy %}
+              <li class="light">• {{ final_sentences }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+          <div id="tab2" class="col s6" style="float: none">
+            {% if final_summary_spacy %}
+            <h5>Gensim</h5>
+            <p>Reading Time: <span style="color:#0091EA;">{{ summary_reading_time_gensim }} min</span></p>
+            <ul>{% for final_sentences in final_summary_gensim %}
+              <li class="light">• {{ final_sentences }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+          <div id="tab3" class="col s6" style="float: none">
+            {% if final_summary_spacy %}
+            <h5>NLTK</h5>
+            <p>Reading Time: <span style="color:#0091EA;">{{ summary_reading_time_nltk }} min</span></p>
+            <ul>{% for final_sentences in final_summary_nltk %}
+              <li class="light">• {{ final_sentences }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+          <div id="tab4" class="col s6" style="float: none">
+            {% if final_summary_spacy %}
+            <h5>Sumy Summarizer</h5>
+            <p>Reading Time: <span style="color:#0091EA;">{{ summary_reading_time_sumy}} min</span></p>
+            <ul>{% for sentence in final_summary_sumy %}
+              <li class="light">• {{ sentence }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+        </div>
+    </div>
+  <div class="divider"></div>
+</section>
   <!-- End -->
   <footer class="page-footer grey darken-4">
     <div class="container" id="aboutapp">
       <div class="row">
         <div class="col s6">
-          <h5 class="white-text">About Summary App</h5>
+          <h5 class="white-text">About sumitUP</h5>
           <p class="grey-text text-lighten-4">Using Spacy, NLTk and Gensim for Text Summarization.</p>
         </div>
         <div class="col s6">
