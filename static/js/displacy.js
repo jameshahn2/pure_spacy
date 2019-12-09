@@ -45,12 +45,12 @@ class displaCy {
             else if(xhr.status !== 200) {
                 if(typeof this.onError === 'function') this.onError(xhr.statusText);
             }
-        }
+        };
 
         xhr.onerror = () => {
             xhr.abort();
             if(typeof this.onError === 'function') this.onError();
-        }
+        };
 
         xhr.send(JSON.stringify({ text, model,
             collapse_punctuation: (settings.collapsePunct != undefined) ? settings.collapsePunct : this.collapsePunct,

@@ -54,15 +54,15 @@ def readingtime(mytext):
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html')
+    return render_template('index.html')
 
 
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     global summary_reading_time_nltk
     start = time.time()
-    if flask.request.method == 'POST':
-        rawtext = flask.request.form['rawtext']
+    if request.method == 'POST':
+        rawtext = request.form['rawtext']
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
