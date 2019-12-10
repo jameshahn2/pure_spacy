@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>sumitUP</title>
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="/static/css/materialize.css" type="text/css" rel="stylesheet" media="screen, projection" />
+  <link href="/static/css/custom.css" type="text/css" rel="stylesheet" media="screen, projection" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script src="{% static "js/displacy.js" %}"></script>
+
+  </head>
+
+<body>
+  <div id="displacy">
+  </div>
+
+  <script>
+    var displacy = new displaCy('/visualize', {
+      container: '#displacy',
+      format: 'spacy',
+      distance: 300,
+      offsetX: 100
+    })
+    var markup = {{json|safe}}
+    displacy.render(markup, {
+      container: '#displacy',
+      format: 'google',
+      distance: '5px',
+      arrowSpacing: '5px',
+      wordSpacing: '10px'
+    });
+  </script>
+
+</body>
