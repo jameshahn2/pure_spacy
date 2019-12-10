@@ -11,6 +11,7 @@
   <link href="/static/css/materialize.css" type="text/css" rel="stylesheet" media="screen, projection" />
   <link href="/static/css/custom.css" type="text/css" rel="stylesheet" media="screen, projection" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <script src="../static/js/displacy.js"></script>
 </head>
 <body>
   <div class="navbar-fixed">
@@ -105,6 +106,8 @@
     </div>
   <div class="container">
   <div class="divider"></div>
+    <div id="displacy">
+  </div>
   </div>
 </section>
   <!-- End -->
@@ -136,5 +139,23 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="/static/js/materialize.js"></script>
   <script src="/static/js/init.js"></script>
+  <script>
+    import {safe} from "../../../projects/python/pure_spacy/lib/python3.8/site-packages/jupyterlab/staging/yarn";
+
+    var displacy = new displaCy('/analyze_url', {
+      container: '#displacy',
+      format: 'spacy',
+      distance: 300,
+      offsetX: 100
+    })
+    var markup = {{json|safe}}
+    displacy.render(markup, {
+      container: '#displacy',
+      format: 'google',
+      distance: '5px',
+      arrowSpacing: '5px',
+      wordSpacing: '10px'
+    });
+  </script>
 </body>
 </html>
