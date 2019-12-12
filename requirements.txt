@@ -1,3 +1,4 @@
+newspaper
 flask
 numpy
 dash
