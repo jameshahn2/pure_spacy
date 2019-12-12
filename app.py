@@ -1,17 +1,19 @@
 from __future__ import unicode_literals
 from bs4 import BeautifulSoup
 from flask import Flask, render_template, url_for, request
+from flaskext.markdown import Markdown
 from gensim.summarization import summarize
 from nltk_summarization import nltk_summarizer
 from newspaper import Article, fulltext
+from spacy import displacy
 from spacy_summarization import text_summarizer
 from sumy.nlp.tokenizers import Tokenizer
 from nltk.tokenize import sent_tokenize
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from spacy.lang.en import English
-import chardet
 import flask
+import json
 import requests
 import spacy
 import spacy_summarization
@@ -35,6 +37,10 @@ headers = {
 
 nlp = spacy.load("en_core_web_sm")
 app = Flask(__name__)
+Markdown(app)
+
+HTML_WRAPPER = """<div style="overflow-x: auto; border: 1px solid #e6e9ef; border-radius: 0.25rem; padding: 1rem">{}</div>"""
+
 
 # Sumy
 def sumy_summary(doc):
@@ -54,7 +60,39 @@ def readingtime(mytext):
 
 @app.route('/')
 def index():
+    # raw_text = "Bill Gates is An American Computer Scientist since 1986"
+    # doc = nlp(rawtext)
+    # html = displacy.render(doc,style="ent")
+    # html = html.replace("\n\n","\n")
+    # result = HTML_WRAPPER.format(html)
+
     return flask.render_template('index.html')
+
+
+@app.route('/extract', methods=["GET", "POST"])
+def extract():
+    if request.method == 'POST':
+        raw_text = request.form['rawtext']
+        docx = nlp(raw_text)
+        html = displacy.render(docx, style="ent")
+        html = html.replace("\n\n", "\n")
+        result = HTML_WRAPPER.format(html)
+
+    return render_template('result.html', rawtext=raw_text, result=result)
+
+
+@app.route('/previewer')
+def previewer():
+    return render_template('previewer.html')
+
+
+@app.route('/preview', methods=["GET", "POST"])
+def preview():
+    if request.method == 'POST':
+        newtext = request.form['newtext']
+        result = newtext
+
+    return render_template('preview.html', newtext=newtext, result=result)
 
 
 @app.route('/analyze', methods=['GET', 'POST'])
