@@ -7,8 +7,8 @@ nlp = spacy.load('en_core_web_sm')
 
 
 def text_summarizer(raw_docx):
-    raw_text = raw_docx
-    docx = nlp(raw_text)
+    rawtext = raw_docx
+    docx = nlp(rawtext)
     stopwords = list(STOP_WORDS)
     # Build Word Frequency
     # word.text is tokenization in spaCy

@@ -5,10 +5,10 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 import heapq
 
 
-def nltk_summarizer(raw_text):
+def nltk_summarizer(rawtext):
     stopWords = set(stopwords.words("english"))
     word_frequencies = {}
-    for word in nltk.word_tokenize(raw_text):
+    for word in nltk.word_tokenize(rawtext):
         if word not in stopWords:
             if word not in word_frequencies.keys():
                 word_frequencies[word] = 1
@@ -20,7 +20,7 @@ def nltk_summarizer(raw_text):
     for word in word_frequencies.keys():
         word_frequencies[word] = (word_frequencies[word] / maximum_frequency)
 
-    sentence_list = nltk.sent_tokenize(raw_text)
+    sentence_list = nltk.sent_tokenize(rawtext)
     sentence_scores = {}
     for sent in sentence_list:
         for word in nltk.word_tokenize(sent.lower()):

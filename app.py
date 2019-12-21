@@ -35,7 +35,7 @@ headers = {
     'accept-language': 'en-US,en;q=0.9'
 }
 
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_lg")
 app = Flask(__name__)
 Markdown(app)
 
@@ -60,7 +60,7 @@ def readingtime(mytext):
 
 @app.route('/')
 def index():
-    # raw_text = "Bill Gates is An American Computer Scientist since 1986"
+    # rawtext = "Bill Gates is An American Computer Scientist since 1986"
     # doc = nlp(rawtext)
     # html = displacy.render(doc,style="ent")
     # html = html.replace("\n\n","\n")
@@ -72,13 +72,13 @@ def index():
 @app.route('/extract', methods=["GET", "POST"])
 def extract():
     if request.method == 'POST':
-        raw_text = request.form['rawtext']
-        docx = nlp(raw_text)
+        rawtext = request.form['rawtext']
+        docx = nlp(rawtext)
         html = displacy.render(docx, style="ent")
         html = html.replace("\n\n", "\n")
         result = HTML_WRAPPER.format(html)
 
-    return render_template('result.html', rawtext=raw_text, result=result)
+    return render_template('result.html', rawtext=rawtext, result=result)
 
 
 @app.route('/previewer')
@@ -104,6 +104,10 @@ def analyze():
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
+        docx = nlp(rawtext)
+        html = displacy.render(docx, style="ent")
+        html = html.replace("\n\n", "\n")
+        result = HTML_WRAPPER.format(html)
         # Gensim Summarizer
         final_summary_gensim = summarize(rawtext, split=True)
         summary_reading_time_gensim = readingtime(str(final_summary_gensim))
@@ -123,7 +127,8 @@ def analyze():
                            summary_reading_time_gensim=summary_reading_time_gensim,
                            final_summary_sumy=final_summary_sumy,
                            summary_reading_time_sumy=summary_reading_time_sumy,
-                           summary_reading_time_nltk=summary_reading_time_nltk)
+                           summary_reading_time_nltk=summary_reading_time_nltk,
+                           rawtext=rawtext, result=result)
 
 
 # Fetch Text From Url
@@ -145,7 +150,17 @@ def analyze_url():
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
+        docx = nlp(rawtext)
+        html = displacy.render(docx, style="ent")
+        html = html.replace("\n\n", "\n")
+        result = HTML_WRAPPER.format(html)
         final_summary_spacy_str = str(final_summary_spacy)
+        for chunk in docx.noun_chunks:
+            print(chunk.text, chunk.root.text, chunk.root.dep_,
+                  chunk.root.head.text)
+        for token in docx:
+            print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,
+                  token.shape_, token.is_alpha, token.is_stop)
         print(final_summary_spacy)
         # Gensim Summarizer
         final_summary_gensim = summarize(rawtext, split=True)
@@ -166,7 +181,8 @@ def analyze_url():
                            summary_reading_time_gensim=summary_reading_time_gensim,
                            final_summary_sumy=final_summary_sumy,
                            summary_reading_time_sumy=summary_reading_time_sumy,
-                           summary_reading_time_nltk=summary_reading_time_nltk)
+                           summary_reading_time_nltk=summary_reading_time_nltk,
+                           rawtext=rawtext, result=result)
 
 
 @app.route('/about')

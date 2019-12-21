@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-    <meta content="utf-8" http-equiv="encoding">
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Summaryzer</title>
+  <title>sumitup</title>
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="/static/css/materialize.css" type="text/css" rel="stylesheet" media="screen, projection" />
   <link href="/static/css/custom.css" type="text/css" rel="stylesheet" media="screen, projection" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 </head>
+
 <body>
   <div class="navbar-fixed">
-      {% block navbar %}
+    {% block navbar %}
     <nav class="grey darken-4" role="navigation">
       <div class="nav-wrapper container">
-        <a id="logo-container" href="/" class="brand-logo">Summaryzer</a>
+        <a id="logo-container" href="/" class="brand-logo">sumitup</a>
         <ul class="right hide-on-med-and-down">
-            <li><a href="{{url_for('index')}}">Home</a></li>
+          <li><a href="{{url_for('index')}}">Home</a></li>
         </ul>
         <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       </div>
     </nav>
-      {% endblock %}
+    {% endblock %}
   </div>
   <ul id="nav-mobile" class="sidenav">
     <li><a href="{{url_for('index')}}">Home</a></li>
   </ul>
+  <!-- Summaries -->
   <section class="section section-solutions-about grey lighten-3 ">
-    <div class="container">
+    <div style="width: 90%;margin:0 auto;">
       <div class="row">
         <div class="row">
           <div class="col s12">
@@ -82,21 +85,37 @@
             {% endif %}
           </div>
         </div>
+      </div>
+      </div>
+    </div>
+        <!-- Named Entity Recognition and Noun Chunks -->
         <div class="col s12">
           {% if final_summary_spacy %}
-              <hr>
-            SOMETHING NEW!!
-              <hr>
+          <hr>
+          {% filter markdown %}
+          {% endfilter %}
+          <div style="width: 90%;margin:0 auto;">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card mb-10 shadow-sm" id="custom_card2">
+                  <h4>Named Entity Recognition</h4>
+                  <p>{{ result|markdown }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div style="width: 90%;margin:0 auto;">
+          <!-- Original Text -->
           <h5>Original Text</h5>
-          <p>Reading Time: <span style="color:#0091EA;">{{ final_reading_time }} min</span></p>
+          <p>Reading Time: <span>{{ final_reading_time }} min</span></p>
           <p class="light">{{ctext}}</p>
           <div class="alert alert-info" role="alert">
             <p>Time Elapsed: <span style="color:#0091EA;">{{ final_time }} mins</span></p>
             <br />
           </div>
-          {% endif %}
         </div>
-      </div>
+          {% endif %}
     </div>
   </section>
   <footer class="page-footer grey darken-4">
@@ -127,5 +146,16 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="/static/js/materialize.js"></script>
   <script src="/static/js/init.js"></script>
+  <script>
+    $(document).ready(function(){
+    $('.tooltipped').tooltip({delay: 50});
+
+    $('#select-beast').selectize({
+      create: true,
+      sortField: 'text'
+  });
+});
+  </script>
 </body>
+
 </html>
