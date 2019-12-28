@@ -6,6 +6,7 @@ from gensim.summarization import summarize
 from nltk_summarization import nltk_summarizer
 from newspaper import Article, fulltext
 from spacy import displacy
+from spacy.pipeline import EntityRuler, merge_entities, merge_noun_chunks
 from spacy_summarization import text_summarizer
 from sumy.nlp.tokenizers import Tokenizer
 from nltk.tokenize import sent_tokenize
@@ -36,6 +37,8 @@ headers = {
 }
 
 nlp = spacy.load("en_core_web_lg")
+merge_nps = nlp.create_pipe("merge_noun_chunks")
+nlp.add_pipe(merge_nps)
 app = Flask(__name__)
 Markdown(app)
 
@@ -151,16 +154,16 @@ def analyze_url():
         final_summary_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
         docx = nlp(rawtext)
+        custom_tokens = [token.text for token in docx]
+        print(custom_tokens)
+        custom_namedentities = [(entity.text, entity.label_) for entity in docx.ents]
+        print(custom_namedentities)
+        chunks = list(docx.noun_chunks)
+        print(chunks)
         html = displacy.render(docx, style="ent")
         html = html.replace("\n\n", "\n")
         result = HTML_WRAPPER.format(html)
         final_summary_spacy_str = str(final_summary_spacy)
-        for chunk in docx.noun_chunks:
-            print(chunk.text, chunk.root.text, chunk.root.dep_,
-                  chunk.root.head.text)
-        for token in docx:
-            print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,
-                  token.shape_, token.is_alpha, token.is_stop)
         print(final_summary_spacy)
         # Gensim Summarizer
         final_summary_gensim = summarize(rawtext, split=True)
@@ -182,7 +185,8 @@ def analyze_url():
                            final_summary_sumy=final_summary_sumy,
                            summary_reading_time_sumy=summary_reading_time_sumy,
                            summary_reading_time_nltk=summary_reading_time_nltk,
-                           rawtext=rawtext, result=result)
+                           rawtext=rawtext, result=result, custom_tokens=custom_tokens,
+                           chunks=chunks)
 
 
 @app.route('/about')
