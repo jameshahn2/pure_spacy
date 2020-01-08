@@ -1,24 +1,25 @@
 from __future__ import unicode_literals
-from bs4 import BeautifulSoup
 from flask import Flask, render_template, url_for, request
 from flaskext.markdown import Markdown
 from gensim.summarization import summarize
-from nltk_summarization import nltk_summarizer
 from newspaper import Article, fulltext
+from nltk_summarization import nltk_summarizer
+from nltk.tokenize import sent_tokenize
 from spacy import displacy
 from spacy.pipeline import EntityRuler, merge_entities, merge_noun_chunks
 from spacy_summarization import text_summarizer
 from sumy.nlp.tokenizers import Tokenizer
-from nltk.tokenize import sent_tokenize
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from spacy.lang.en import English
-import flask
-import json
-import requests
+import pandas as pd
 import spacy
 import spacy_summarization
 import time
+import flaskext
+import flask
+import json
+import requests
 
 headers = {
     'authority': 'triberocket.com',
@@ -36,7 +37,7 @@ headers = {
     'accept-language': 'en-US,en;q=0.9'
 }
 
-nlp = spacy.load("en_core_web_lg")
+nlp = spacy.load("en_core_web_sm")
 merge_nps = nlp.create_pipe("merge_noun_chunks")
 nlp.add_pipe(merge_nps)
 app = Flask(__name__)
@@ -46,8 +47,8 @@ HTML_WRAPPER = """<div style="overflow-x: auto; border: 1px solid #e6e9ef; borde
 
 
 # Sumy
-def sumy_summary(doc):
-    parser = PlaintextParser.from_string(doc, Tokenizer("english"))
+def sumy_summary(docx):
+    parser = PlaintextParser.from_string(docx, Tokenizer("english"))
     lex_summarizer = LexRankSummarizer()
     summary = lex_summarizer(parser.document, 5)
     result = [str(sentence) for sentence in summary]
@@ -61,6 +62,16 @@ def readingtime(mytext):
     return estimatedTime
 
 
+# Fetch Text From Url
+def get_text(url):
+    r = requests.get(url, headers=headers, timeout=30).text
+    article = Article(url)
+    article.download()
+    print(article.text)
+    article.parse()
+    return article.text
+
+
 @app.route('/')
 def index():
     # rawtext = "Bill Gates is An American Computer Scientist since 1986"
@@ -72,45 +83,20 @@ def index():
     return flask.render_template('index.html')
 
 
-@app.route('/extract', methods=["GET", "POST"])
-def extract():
-    if request.method == 'POST':
-        rawtext = request.form['rawtext']
-        docx = nlp(rawtext)
-        html = displacy.render(docx, style="ent")
-        html = html.replace("\n\n", "\n")
-        result = HTML_WRAPPER.format(html)
-
-    return render_template('result.html', rawtext=rawtext, result=result)
-
-
-@app.route('/previewer')
-def previewer():
-    return render_template('previewer.html')
-
-
-@app.route('/preview', methods=["GET", "POST"])
-def preview():
-    if request.method == 'POST':
-        newtext = request.form['newtext']
-        result = newtext
-
-    return render_template('preview.html', newtext=newtext, result=result)
-
-
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
-    global summary_reading_time_nltk
     start = time.time()
-    if flask.request.method == 'POST':
-        rawtext = flask.request.form['rawtext']
+    if request.method == 'POST':
+        rawtext = request.form['rawtext']
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
         docx = nlp(rawtext)
-        html = displacy.render(docx, style="ent")
+        html = displacy.render(docx, style='ent')
         html = html.replace("\n\n", "\n")
-        result = HTML_WRAPPER.format(html)
+        entity_result = HTML_WRAPPER.format(html)
+        pos_results = [(token.text, token.pos_, token.shape_, token.dep_) for token in docx]
+        df = pd.DataFrame(pos_results, columns=['Word', 'Parts of Speech', 'Word Shape', 'Dependency'])
         # Gensim Summarizer
         final_summary_gensim = summarize(rawtext, split=True)
         summary_reading_time_gensim = readingtime(str(final_summary_gensim))
@@ -123,25 +109,23 @@ def analyze():
 
         end = time.time()
         final_time = end - start
-    return render_template('analyze_url.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
+
+        # Word Stats
+        tokens_results = [token.text for token in docx]
+        entity_list = [(entity.text, entity.label_) for entity in docx.ents]
+        lemma_list = [token.lemma_ for token in docx]
+        adj_list = [token for token in docx if token.pos_ == 'ADJ']
+        noun_list = [token for token in docx if token.pos_ == 'NOUN']
+    return render_template('index.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
+                           entity_list=entity_list,
+                           final_reading_time=final_reading_time,
                            final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
-                           final_time=final_time, final_reading_time=final_reading_time,
-                           summary_reading_time=summary_reading_time,
+                           final_summary_spacy=final_summary_spacy,
+                           final_summary_sumy=final_summary_sumy, final_time=final_time,
+                           lemma_list=lemma_list, noun_list=noun_list, summary_reading_time=summary_reading_time,
                            summary_reading_time_gensim=summary_reading_time_gensim,
-                           final_summary_sumy=final_summary_sumy,
-                           summary_reading_time_sumy=summary_reading_time_sumy,
                            summary_reading_time_nltk=summary_reading_time_nltk,
-                           rawtext=rawtext, result=result)
-
-
-# Fetch Text From Url
-def get_text(url):
-    r = requests.get(url, headers=headers, timeout=30).text
-    article = Article(url)
-    article.download()
-    print(article.text)
-    article.parse()
-    return article.text
+                           summary_reading_time_sumy=summary_reading_time_sumy, tokens_results=tokens_results)
 
 
 @app.route('/analyze_url', methods=['GET', 'POST'])
@@ -154,17 +138,11 @@ def analyze_url():
         final_summary_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
         docx = nlp(rawtext)
-        custom_tokens = [token.text for token in docx]
-        print(custom_tokens)
-        custom_namedentities = [(entity.text, entity.label_) for entity in docx.ents]
-        print(custom_namedentities)
-        chunks = list(docx.noun_chunks)
-        print(chunks)
-        html = displacy.render(docx, style="ent")
+        html = displacy.render(docx, style='ent')
         html = html.replace("\n\n", "\n")
-        result = HTML_WRAPPER.format(html)
-        final_summary_spacy_str = str(final_summary_spacy)
-        print(final_summary_spacy)
+        entity_result = HTML_WRAPPER.format(html)
+        pos_results = [(token.text, token.pos_, token.shape_, token.dep_) for token in docx]
+        df = pd.DataFrame(pos_results, columns=['Word', 'Parts of Speech', 'Word Shape', 'Dependency'])
         # Gensim Summarizer
         final_summary_gensim = summarize(rawtext, split=True)
         summary_reading_time_gensim = readingtime(str(final_summary_gensim))
@@ -177,16 +155,23 @@ def analyze_url():
 
         end = time.time()
         final_time = end - start
-    return render_template('analyze_url.html', ctext=rawtext, final_summary_spacy=final_summary_spacy,
+
+        # Word Stats
+        tokens_results = [token.text for token in docx]
+        entity_list = [(entity.text, entity.label_) for entity in docx.ents]
+        lemma_list = [token.lemma_ for token in docx]
+        adj_list = [token for token in docx if token.pos_ == 'ADJ']
+        noun_list = [token for token in docx if token.pos_ == 'NOUN']
+    return render_template('index.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
+                           entity_list=entity_list,
+                           final_reading_time=final_reading_time,
                            final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
-                           final_time=final_time, final_reading_time=final_reading_time,
-                           summary_reading_time=summary_reading_time,
+                           final_summary_spacy=final_summary_spacy,
+                           final_summary_sumy=final_summary_sumy, final_time=final_time,
+                           lemma_list=lemma_list, noun_list=noun_list, summary_reading_time=summary_reading_time,
                            summary_reading_time_gensim=summary_reading_time_gensim,
-                           final_summary_sumy=final_summary_sumy,
-                           summary_reading_time_sumy=summary_reading_time_sumy,
                            summary_reading_time_nltk=summary_reading_time_nltk,
-                           rawtext=rawtext, result=result, custom_tokens=custom_tokens,
-                           chunks=chunks)
+                           summary_reading_time_sumy=summary_reading_time_sumy, tokens_results=tokens_results)
 
 
 @app.route('/about')
