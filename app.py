@@ -38,8 +38,6 @@ headers = {
 }
 
 nlp = spacy.load("en_core_web_sm")
-merge_nps = nlp.create_pipe("merge_noun_chunks")
-nlp.add_pipe(merge_nps)
 app = Flask(__name__)
 Markdown(app)
 

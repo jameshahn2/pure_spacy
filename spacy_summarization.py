@@ -47,3 +47,4 @@ def text_summarizer(raw_docx):
     print('\n\nSummarized Document\n')
     print(final_sentences)
     print("Total Length:", len(final_sentences))
+

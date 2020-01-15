@@ -71,8 +71,8 @@
             <div class="" role="alert">
               <p>Reading Time: <span style="color:#0091EA;">{{ summary_reading_time }} min </span></p>
             </div>
-            <ul>{% for sentence in final_summary_sumy %}
-              <li class="light">• {{ sentence }}</li>
+            <ul>{% for final_sentences in final_summary_spacy %}
+              <li class="light">• {{ final_sentences }}</li>
               {% endfor %}
             </ul>
         </div>
