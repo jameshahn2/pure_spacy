@@ -65,7 +65,6 @@ def get_text(url):
     r = requests.get(url, headers=headers, timeout=30).text
     article = Article(url)
     article.download()
-    print(article.text)
     article.parse()
     return article.text
 
@@ -134,6 +133,7 @@ def analyze_url():
         rawtext = get_text(raw_url)
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
+        summary_4_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
         docx = nlp(rawtext)
         html = displacy.render(docx, style='ent')
@@ -170,6 +170,51 @@ def analyze_url():
                            summary_reading_time_gensim=summary_reading_time_gensim,
                            summary_reading_time_nltk=summary_reading_time_nltk,
                            summary_reading_time_sumy=summary_reading_time_sumy, tokens_results=tokens_results)
+
+
+@app.route('/summaries', methods=['GET', 'POST'])
+def summaries():
+    start = time.time()
+    if request.method == 'POST':
+        raw_url = request.form['raw_url']
+        rawtext = get_text(raw_url)
+        final_reading_time = readingtime(rawtext)
+        final_summary_spacy = text_summarizer(rawtext)
+        summary_4_spacy = text_summarizer(rawtext)
+        summary_reading_time = readingtime(str(final_summary_spacy))
+        docx = nlp(rawtext)
+        html = displacy.render(docx, style='ent')
+        html = html.replace("\n\n", "\n")
+        entity_result = HTML_WRAPPER.format(html)
+        pos_results = [(token.text, token.pos_, token.shape_, token.dep_) for token in docx]
+        df = pd.DataFrame(pos_results, columns=['Word', 'Parts of Speech', 'Word Shape', 'Dependency'])
+        # Gensim Summarizer
+        final_summary_gensim = summarize(rawtext, split=True)
+        summary_reading_time_gensim = readingtime(str(final_summary_gensim))
+        # NLTK
+        final_summary_nltk = nltk_summarizer(rawtext)
+        summary_reading_time_nltk = readingtime(str(final_summary_nltk))
+        # Sumy
+        final_summary_sumy = sumy_summary(rawtext)
+        summary_reading_time_sumy = readingtime(str(final_summary_sumy))
+
+        summary_4_spacy = text_summarizer(rawtext)
+        summary_4_gensim = summarize(summary_4_spacy)
+        final_summary = sumy_summary(summary_4_gensim)
+
+        end = time.time()
+        final_time = end - start
+    return render_template('index.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
+                           entity_list=entity_list,
+                           final_reading_time=final_reading_time,
+                           final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
+                           final_summary_spacy=final_summary_spacy,
+                           final_summary_sumy=final_summary_sumy, final_time=final_time,
+                           lemma_list=lemma_list, noun_list=noun_list, summary_reading_time=summary_reading_time,
+                           summary_reading_time_gensim=summary_reading_time_gensim,
+                           summary_reading_time_nltk=summary_reading_time_nltk,
+                           summary_reading_time_sumy=summary_reading_time_sumy, tokens_results=tokens_results,
+                           summary_4_spacy=summary_4_spacy, summary_4_gensim=summary_4_gensim, final_summary=final_summary)
 
 
 @app.route('/about')

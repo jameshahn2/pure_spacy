@@ -148,6 +148,13 @@
   {% endif %}
   </div>
 
+  <div>
+    <ul>{% for final_summary in final_summary %}
+    <li>{{ final_summary }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+
   <!-- SECTION: RESULTS FOR TOKENS,LEMMAS,NOUNS -->
   <section class="section section-solutions-about grey lighten-3">
       {% if final_summary_spacy %}
