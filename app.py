@@ -180,7 +180,6 @@ def summaries():
         rawtext = get_text(raw_url)
         final_reading_time = readingtime(rawtext)
         final_summary_spacy = text_summarizer(rawtext)
-        summary_4_spacy = text_summarizer(rawtext)
         summary_reading_time = readingtime(str(final_summary_spacy))
         docx = nlp(rawtext)
         html = displacy.render(docx, style='ent')
@@ -197,10 +196,8 @@ def summaries():
         # Sumy
         final_summary_sumy = sumy_summary(rawtext)
         summary_reading_time_sumy = readingtime(str(final_summary_sumy))
-
-        summary_4_spacy = text_summarizer(rawtext)
-        summary_4_gensim = summarize(summary_4_spacy)
-        final_summary = sumy_summary(summary_4_gensim)
+        # Final Summary
+        final_summary = summarize(nltk_summarizer(text_summarizer(sumy_summary)))
 
         end = time.time()
         final_time = end - start
@@ -214,7 +211,8 @@ def summaries():
                            summary_reading_time_gensim=summary_reading_time_gensim,
                            summary_reading_time_nltk=summary_reading_time_nltk,
                            summary_reading_time_sumy=summary_reading_time_sumy, tokens_results=tokens_results,
-                           summary_4_spacy=summary_4_spacy, summary_4_gensim=summary_4_gensim, final_summary=final_summary)
+                           summary_4_spacy=summary_4_spacy, summary_4_gensim=summary_4_gensim, summary_4_nltk=summary_4_nltk,
+                           summary_4_sumy=summary_4_sumy, final_summary=final_summary)
 
 
 @app.route('/about')
@@ -224,3 +222,4 @@ def about():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
