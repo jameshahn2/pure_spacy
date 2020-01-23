@@ -113,7 +113,7 @@ def analyze():
         lemma_list = [token.lemma_ for token in docx]
         adj_list = [token for token in docx if token.pos_ == 'ADJ']
         noun_list = [token for token in docx if token.pos_ == 'NOUN']
-    return render_template('index.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
+    return render_template('summaries.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
                            entity_list=entity_list,
                            final_reading_time=final_reading_time,
                            final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
@@ -160,7 +160,7 @@ def analyze_url():
         lemma_list = [token.lemma_ for token in docx]
         adj_list = [token for token in docx if token.pos_ == 'ADJ']
         noun_list = [token for token in docx if token.pos_ == 'NOUN']
-    return render_template('index.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
+    return render_template('summaries.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
                            entity_list=entity_list,
                            final_reading_time=final_reading_time,
                            final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
@@ -201,7 +201,7 @@ def summaries():
 
         end = time.time()
         final_time = end - start
-    return render_template('index.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
+    return render_template('summaries.html', ctext=rawtext, entity_result=entity_result, dftable=df, adj_list=adj_list,
                            entity_list=entity_list,
                            final_reading_time=final_reading_time,
                            final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,
