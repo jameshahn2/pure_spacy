@@ -12,6 +12,7 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from spacy.lang.en import English
+import csv
 import pandas as pd
 import spacy
 import spacy_summarization
@@ -151,6 +152,12 @@ def analyze_url():
         final_summary_sumy = sumy_summary(rawtext)
         summary_reading_time_sumy = readingtime(str(final_summary_sumy))
 
+        with open('sumitup.csv', 'w', newline='') as f:
+            writecsv = csv.writer(f)
+
+            writecsv.writerow(['spaCy', 'Gensim', 'NLTK', 'Sumy'])
+            writecsv.writerow([(final_summary_spacy), (final_summary_gensim), (final_summary_nltk), (final_summary_sumy)])
+
         end = time.time()
         final_time = end - start
 
@@ -215,11 +222,11 @@ def summaries():
                            summary_4_sumy=summary_4_sumy, final_summary=final_summary)
 
 
-@app.route('/about')
-def about():
-    return render_template('index.html')
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
 

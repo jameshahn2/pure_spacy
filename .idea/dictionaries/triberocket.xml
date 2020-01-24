@@ -21,6 +21,7 @@
       <w>sumy</w>
       <w>tokenization</w>
       <w>vpal</w>
+      <w>writecsv</w>
     </words>
   </dictionary>
 </component>
