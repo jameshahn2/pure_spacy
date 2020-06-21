@@ -63,7 +63,6 @@ def readingtime(mytext):
 
 # Fetch Text From Url
 def get_text(url):
-    r = requests.get(url, headers=headers, timeout=30).text
     article = Article(url)
     article.download()
     article.parse()
