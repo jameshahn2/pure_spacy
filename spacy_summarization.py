@@ -38,7 +38,7 @@ def text_summarizer(raw_docx):
                     else:
                         sentence_scores[sent] += word_frequencies[word.text.lower()]
 
-    summarized_sentences = nlargest(7, sentence_scores, key=sentence_scores.get)
+    summarized_sentences = nlargest(6, sentence_scores, key=sentence_scores.get)
     final_sentences = [f'{w.text}' for w in summarized_sentences]
     return list(final_sentences)
     print("Original Document\n")
@@ -47,4 +47,3 @@ def text_summarizer(raw_docx):
     print('\n\nSummarized Document\n')
     print(final_sentences)
     print("Total Length:", len(final_sentences))
-

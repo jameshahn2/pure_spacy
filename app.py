@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from app import app as application
 from flask import Flask, render_template, url_for, request
 from flaskext.markdown import Markdown
 from gensim.summarization import summarize
@@ -49,7 +50,7 @@ HTML_WRAPPER = """<div style="overflow-x: auto; border: 1px solid #e6e9ef; borde
 def sumy_summary(docx):
     parser = PlaintextParser.from_string(docx, Tokenizer("english"))
     lex_summarizer = LexRankSummarizer()
-    summary = lex_summarizer(parser.document, 5)
+    summary = lex_summarizer(parser.document, 6)
     result = [str(sentence) for sentence in summary]
     return list(result)
 
@@ -142,7 +143,7 @@ def analyze_url():
         pos_results = [(token.text, token.pos_, token.shape_, token.dep_) for token in docx]
         df = pd.DataFrame(pos_results, columns=['Word', 'Parts of Speech', 'Word Shape', 'Dependency'])
         # Gensim Summarizer
-        final_summary_gensim = summarize(rawtext, split=True)
+        final_summary_gensim = summarize(rawtext, split=True, word_count=200)
         summary_reading_time_gensim = readingtime(str(final_summary_gensim))
         # NLTK
         final_summary_nltk = nltk_summarizer(rawtext)
@@ -150,12 +151,6 @@ def analyze_url():
         # Sumy
         final_summary_sumy = sumy_summary(rawtext)
         summary_reading_time_sumy = readingtime(str(final_summary_sumy))
-
-        with open('sumitup.csv', 'w', newline='') as f:
-            writecsv = csv.writer(f)
-
-            writecsv.writerow(['spaCy', 'Gensim', 'NLTK', 'Sumy'])
-            writecsv.writerow([(final_summary_spacy), (final_summary_gensim), (final_summary_nltk), (final_summary_sumy)])
 
         end = time.time()
         final_time = end - start
@@ -227,5 +222,5 @@ def pricing():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
 
